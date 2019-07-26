@@ -30,7 +30,7 @@ class RTSPCamera(Camera):
         atexit.register(self.cap.release)
                 
     def _gst_str(self):
-        return 'rtspsrc location={} ! decodebin ! nvvidconv ! video/x-raw, width=(int){}, height=(int){}, format=(string)BGRx ! videoconvert ! appsink'.format(self.capture_device, self.capture_width, self.capture_height)
+        return 'rtspsrc location={} ! decodebin ! videoconvert ! appsink'.format(self.capture_device, self.capture_width, self.capture_height)
           
     def _read(self):
         re, image = self.cap.read()

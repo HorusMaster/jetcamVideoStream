@@ -6,15 +6,15 @@ import threading
 import traitlets
 
 
-class RTSPCamera(Camera):
+class videoStream(Camera):
     
     capture_fps = traitlets.Integer(default_value=30)
     capture_width = traitlets.Integer(default_value=640)
     capture_height = traitlets.Integer(default_value=480)  
-    capture_device = traitlets.Unicode(default_value='rtsp://Your_IP_Cam_Address')        
+    capture_device = traitlets.Unicode(default_value='/home/horus/Notebooks/Orcamia/test/AsaltoPistolaJuguete.avi')        
     
     def __init__(self, *args, **kwargs):
-        super(RTSPCamera, self).__init__(*args, **kwargs)
+        super(videoStream, self).__init__(*args, **kwargs)
         try:
             self.cap = cv2.VideoCapture(self._gst_str(), cv2.CAP_GSTREAMER)
 
@@ -30,7 +30,9 @@ class RTSPCamera(Camera):
         atexit.register(self.cap.release)
                 
     def _gst_str(self):
-        return 'rtspsrc location={} ! decodebin ! videoconvert ! appsink'.format(self.capture_device, self.capture_width, self.capture_height)
+        return 'filesrc location={} ! avidemux ! decodebin ! videoconvert ! videoscale ! appsink'.format(self.capture_device, self.capture_width, self.capture_height)
+    
+        #return 'rtspsrc location={} ! decodebin ! nvvidconv ! video/x-raw, width=(int){}, height=(int){}, format=(string)BGRx ! videoconvert ! appsink'.format(self.capture_device, self.capture_width, self.capture_height)
           
     def _read(self):
         re, image = self.cap.read()
